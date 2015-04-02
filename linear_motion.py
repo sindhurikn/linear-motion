@@ -28,6 +28,24 @@ calc_aspeed = average_speed if average_speed != '' else None
 calc_accln = accln if accln != '' else None
 calc_time = time if time != '' else None
 
+def solve_quadratic_eqn(a=None, b=None, c=None):
+    '''Assumes that input given is for eqn of the form : ax^2 + bx + c = 0
+    Returns x1, x2 - the 2 roots of the eqn
+    '''
+    if a is None and b is None and c is None:
+        raise Exception('No input given')
+    elif a == 0 and b == 0:
+        raise Exception('Not a quadratic eqn')
+    elif a == 0:
+        # this means that it is a linear equation
+        return (-(float(c)/float(b)), None)
+    else:
+        x1 = (-(b) + math.sqrt((b^2) - (4*a*c))) / (2*a)
+        x2 = (-(b) - math.sqrt((b^2) - (4*a*c))) / (2*a)
+
+        return (x1, x2)
+
+
 def find_distance():
 # s = avg v * t
 # s = ut + (0.5*a*t^2)
@@ -127,7 +145,20 @@ def find_time():
         elif calc_ispeed and calc_fspeed and calc_ispeed == calc_fspeed and calc_distance and float(calc_ispeed) != 0:
             calc_time = float(calc_distance) / float(calc_ispeed)
         elif calc_ispeed and calc_distance and calc_accln:
-            return "solve a quadratic eqn here"
+            t1, t2 = solve_quadratic_eqn(float(-(a))/2, calc_ispeed, -(calc_distance)) 
+            if t2 is None:
+                if t1 < 0:
+                    return "Are you sure you gave me the right input? I got a negative time value: "+(t1)+" s"
+                else:
+                    return str(t1)+" s"
+            elif t1 < 0 and t2 >= 0:
+                return str(t2)+" s"
+            elif t1 >=0 and t2 < 0:
+                return str(t1)+" s"
+            elif t1 == 0 and t2 == 0:
+                return str(t1)+" s"
+            else:
+                return "Are you sure you gave me the right input to begin with? I got negative time values: "+str(t1) + " , "+ str(t2)
     if calc_time is None:
         return "I couldn't find the time :( Please teach me if you know how to."
     else:
